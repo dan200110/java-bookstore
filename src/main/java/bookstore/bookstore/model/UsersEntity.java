@@ -2,10 +2,14 @@ package bookstore.bookstore.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.util.Objects;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "users", schema = "e-commerce", catalog = "")
 public class UsersEntity {
@@ -20,41 +24,8 @@ public class UsersEntity {
     @Column(name = "user_type")
     private String userType;
     @Basic
-    @JsonIgnore
     @Column(name = "password")
     private String password;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getUserType() {
-        return userType;
-    }
-
-    public void setUserType(String userType) {
-        this.userType = userType;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     @Override
     public boolean equals(Object o) {
