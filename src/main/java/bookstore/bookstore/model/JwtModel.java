@@ -1,13 +1,9 @@
 package bookstore.bookstore.model;
 
 import lombok.*;
-
 @Data
-@NoArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor(force = true)
 public class JwtModel {
-    private String jwt;
-
-    public JwtModel(String jwt) {
-        this.jwt = jwt;
-    }
+    private final String jwt;
 }
