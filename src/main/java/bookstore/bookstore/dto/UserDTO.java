@@ -1,4 +1,4 @@
-package bookstore.bookstore.DTO;
+package bookstore.bookstore.dto;
 
 import lombok.Data;
 

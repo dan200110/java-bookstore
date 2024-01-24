@@ -1,12 +1,11 @@
 package bookstore.bookstore.controller;
 
-import bookstore.bookstore.DTO.UserDTO;
+import bookstore.bookstore.dto.UserDTO;
 import bookstore.bookstore.model.JwtModel;
 import bookstore.bookstore.model.UsersEntity;
 import bookstore.bookstore.service.UserService;
 import bookstore.bookstore.util.JwtUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
