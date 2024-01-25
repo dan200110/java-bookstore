@@ -1,9 +1,7 @@
 package bookstore.bookstore.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Objects;
 
@@ -11,7 +9,9 @@ import java.util.Objects;
 @Table(name = "cart_item", schema = "e-commerce", catalog = "")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class CartItemsEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

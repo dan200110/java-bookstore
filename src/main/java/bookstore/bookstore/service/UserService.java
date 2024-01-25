@@ -1,10 +1,12 @@
 package bookstore.bookstore.service;
 
+import bookstore.bookstore.dto.UserDTO;
 import bookstore.bookstore.model.UsersEntity;
 import bookstore.bookstore.repository.UserRepository;
 import bookstore.bookstore.util.JwtUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@Slf4j
 public class UserService implements UserServiceInterface {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -51,6 +54,22 @@ public class UserService implements UserServiceInterface {
         }
 
         return result;
+    }
+
+    public boolean changePassword(String jwtToken, UserDTO userDTO) {
+        return getUserByJwtToken(jwtToken)
+                .filter(user -> passwordEncoder.matches(userDTO.getCurrentPassword(), user.getPassword()))
+                .map(user -> {
+                    try {
+                        user.setPassword(passwordEncoder.encode(userDTO.getNewPassword()));
+                        userRepository.save(user);
+                        return true;
+                    } catch (Exception e) {
+                        log.error("Error while updating password", e);
+                    }
+                    return false;
+                })
+                .orElse(false);
     }
 
     @Override

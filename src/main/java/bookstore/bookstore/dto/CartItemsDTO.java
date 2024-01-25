@@ -1,11 +1,12 @@
 package bookstore.bookstore.dto;
 
+import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class CartItemsDTO {
+@Builder
+public class CartItemsDTO extends JwtModel {
     private final int id;
-    private final String jwt;
     private final int productId;
     private final int quantity;
 }
