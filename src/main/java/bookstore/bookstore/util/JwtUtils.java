@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.*;
+import org.springframework.util.StringUtils;
 
 @Component
 public class JwtUtils {
@@ -28,7 +29,12 @@ public class JwtUtils {
     public String getUserNameFromJwtToken(String token) {
         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
     }
-
+    public String extractJwtTokenFromAuthHeader(String authHeader) {
+        if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7); // Remove "Bearer " prefix
+        }
+        throw new IllegalArgumentException("Invalid or missing Authorization header");
+    }
     public boolean validateJwtToken(String authToken) {
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
