@@ -33,12 +33,23 @@ public class UsersEntity {
     @JoinColumn(name = "user_id")
     private List<CartItemsEntity> cartItemsEntityList;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "provider_id")
+    private List<ProductsEntity> productsEntityList;
     public void addCartItems(CartItemsEntity cartItemsEntity) {
         if (cartItemsEntityList == null) {
             cartItemsEntityList = new ArrayList<>();
         }
 
         cartItemsEntityList.add(cartItemsEntity);
+    }
+
+    public void addProductEntity(ProductsEntity productsEntity) {
+        if (productsEntityList == null) {
+            productsEntityList = new ArrayList<>();
+        }
+
+        productsEntityList.add(productsEntity);
     }
     @Override
     public boolean equals(Object o) {

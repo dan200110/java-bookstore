@@ -18,9 +18,6 @@ public class ProductsEntity {
     @Column(name = "id")
     private int id;
     @Basic
-    @Column(name = "product_category")
-    private Integer productCategory;
-    @Basic
     @Column(name = "product_name")
     private String productName;
     @Basic
@@ -39,16 +36,19 @@ public class ProductsEntity {
     @Column(name = "provider_id")
     private Integer providerId;
 
+    @ManyToOne
+    @JoinColumn(name = "product_category")
+    private CategoryEntity categoryEntity;
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ProductsEntity that = (ProductsEntity) o;
-        return id == that.id && Objects.equals(productCategory, that.productCategory) && Objects.equals(productName, that.productName) && Objects.equals(productPrice, that.productPrice) && Objects.equals(quantity, that.quantity) && Objects.equals(productDetails, that.productDetails) && Objects.equals(productPhoto, that.productPhoto) && Objects.equals(providerId, that.providerId);
+        return id == that.id &&  Objects.equals(productName, that.productName) && Objects.equals(productPrice, that.productPrice) && Objects.equals(quantity, that.quantity) && Objects.equals(productDetails, that.productDetails) && Objects.equals(productPhoto, that.productPhoto) && Objects.equals(providerId, that.providerId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, productCategory, productName, productPrice, quantity, productDetails, productPhoto, providerId);
+        return Objects.hash(id, productName, productPrice, quantity, productDetails, productPhoto, providerId);
     }
 }
