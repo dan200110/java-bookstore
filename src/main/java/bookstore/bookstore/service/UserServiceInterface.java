@@ -8,4 +8,5 @@ public interface UserServiceInterface {
     public Optional<UsersEntity> registerUser(UsersEntity usersEntity);
     public Optional<UsersEntity> updateUser(UsersEntity usersEntity);
     public Optional<UsersEntity> getUserByUserName(String userName);
+    Optional<UsersEntity> getUserByJwtToken(String userName);
 }

@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Setter
@@ -27,6 +29,17 @@ public class UsersEntity {
     @Column(name = "password")
     private String password;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private List<CartItemsEntity> cartItemsEntityList;
+
+    public void addCartItems(CartItemsEntity cartItemsEntity) {
+        if (cartItemsEntityList == null) {
+            cartItemsEntityList = new ArrayList<>();
+        }
+
+        cartItemsEntityList.add(cartItemsEntity);
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

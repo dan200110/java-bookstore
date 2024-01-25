@@ -2,12 +2,16 @@ package bookstore.bookstore.service;
 
 import bookstore.bookstore.model.UsersEntity;
 import bookstore.bookstore.repository.UserRepository;
+import bookstore.bookstore.util.JwtUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +23,8 @@ import java.util.Optional;
 public class UserService implements UserServiceInterface {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtils jwtUtils;
+    private final MyUserDetailsService myUserDetailsService;
     @Override
     @Transactional
     public Optional<UsersEntity> registerUser(UsersEntity usersEntity) {
@@ -52,6 +58,11 @@ public class UserService implements UserServiceInterface {
         return userRepository.findUsersEntityByUserName(userName);
     }
 
+    @Override
+    @Transactional
+    public Optional<UsersEntity> getUserByJwtToken(String jwt) {
+        return userRepository.findUsersEntityByUserName(jwtUtils.getUserNameFromJwtToken(jwt));
+    }
     public List<UsersEntity> getAllUsers() {
         return userRepository.findAll();
     }
