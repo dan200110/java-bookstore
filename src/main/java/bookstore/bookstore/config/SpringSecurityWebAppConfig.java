@@ -50,7 +50,7 @@ public class SpringSecurityWebAppConfig {
         http.csrf().disable().cors().and().authorizeHttpRequests()
                 .requestMatchers("/register/**").permitAll()
                 .requestMatchers("/login/**").permitAll()
-                .requestMatchers("**").permitAll()
+                .requestMatchers("/product/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement()
