@@ -8,6 +8,7 @@ import bookstore.bookstore.service.CartItemsService;
 import bookstore.bookstore.service.UserService;
 import bookstore.bookstore.util.JwtUtils;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,19 +24,23 @@ public class CartItemsController {
     private final CartItemsService cartItemsService;
     private final UserService userService;
     private final JwtUtils jwtUtils;
+
     @GetMapping("/get_cart_items")
-    public ResponseEntity<List<CartItemsEntity>> getCartItems(@RequestHeader(name = "Authorization") String authHeader) {
+    public ResponseEntity<List<CartItemsDTO>> getCartItems(@RequestHeader(name = "Authorization") String authHeader) {
         String jwtToken = jwtUtils.extractJwtTokenFromAuthHeader(authHeader);
         Optional<UsersEntity> usersEntity = userService.getUserByJwtToken(jwtToken);
+
         if (usersEntity.isPresent()) {
-            List<CartItemsEntity> cartItemsEntityList = cartItemsService.getCartItemsEntitiesByUserId(usersEntity.get().getId())
-                    .orElse(Collections.emptyList());
+            Optional<List<CartItemsDTO>> cartItemsResponseDTOs = cartItemsService.getCartItemsByUserId(usersEntity.get().getId());
 
-            return new ResponseEntity<>(cartItemsEntityList, HttpStatus.OK);
+            if (cartItemsResponseDTOs.isPresent()) {
+                return new ResponseEntity<>(cartItemsResponseDTOs.get(), HttpStatus.OK);
+            }
         }
-        return new ResponseEntity<>(Collections.emptyList(), HttpStatus.BAD_REQUEST);
 
+        return new ResponseEntity<>(Collections.emptyList(), HttpStatus.BAD_REQUEST);
     }
+
 
     @PostMapping("/add_cart_item")
     public ResponseEntity<String> addCartItem(@RequestHeader(name = "Authorization") String authHeader, @RequestBody CartItemsDTO cartItemsDTO) {
@@ -46,5 +51,35 @@ public class CartItemsController {
         }
 
         return new ResponseEntity<>("Failed to add new cart items", HttpStatus.BAD_REQUEST);
+    }
+
+    @DeleteMapping("/delete_cart_item")
+    public ResponseEntity<String> deleteCartItem(@RequestHeader(name = "Authorization") String authHeader, @RequestParam int cartItemId) {
+        String jwtToken = jwtUtils.extractJwtTokenFromAuthHeader(authHeader);
+        if (Boolean.TRUE.equals(cartItemsService.deleteCartItemById(jwtToken, cartItemId))) {
+            return new ResponseEntity<>("Delete cart item successfully", HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>("Failed to delete cart item", HttpStatus.BAD_REQUEST);
+    }
+
+    @DeleteMapping("/delete_cart_items")
+    public ResponseEntity<String> deleteCartItems(@RequestHeader(name = "Authorization") String authHeader) {
+        String jwtToken = jwtUtils.extractJwtTokenFromAuthHeader(authHeader);
+        if (Boolean.TRUE.equals(cartItemsService.deleteAllCartItems(jwtToken))) {
+            return new ResponseEntity<>("Delete all cart item successfully", HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>("Failed to delete all cart item", HttpStatus.BAD_REQUEST);
+    }
+
+    @DeleteMapping("/delete_cart_item_by_ids")
+    public ResponseEntity<String> deleteCartItem(@RequestHeader(name = "Authorization") String authHeader, @RequestParam String cartItemIds) {
+        String jwtToken = jwtUtils.extractJwtTokenFromAuthHeader(authHeader);
+        if (Boolean.TRUE.equals(cartItemsService.deleteCartItemsByIds(jwtToken, cartItemIds))) {
+            return new ResponseEntity<>("Delete cart items successfully", HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>("Failed to delete cart items", HttpStatus.BAD_REQUEST);
     }
 }
