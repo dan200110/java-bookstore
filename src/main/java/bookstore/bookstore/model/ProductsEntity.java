@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -32,23 +33,15 @@ public class ProductsEntity {
     @Basic
     @Column(name = "product_photo")
     private String productPhoto;
-    @Basic
-    @Column(name = "provider_id")
-    private Integer providerId;
+
+//    @ManyToOne(cascade = CascadeType.PERSIST)
+//    @JoinColumn(name = "product_category")
+//    private CategoryEntity categoryEntity;
 
     @ManyToOne
-    @JoinColumn(name = "product_category")
-    private CategoryEntity categoryEntity;
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ProductsEntity that = (ProductsEntity) o;
-        return id == that.id &&  Objects.equals(productName, that.productName) && Objects.equals(productPrice, that.productPrice) && Objects.equals(quantity, that.quantity) && Objects.equals(productDetails, that.productDetails) && Objects.equals(productPhoto, that.productPhoto) && Objects.equals(providerId, that.providerId);
-    }
+    @JoinColumn(name = "provider_id")
+    private UsersEntity usersEntity;
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, productName, productPrice, quantity, productDetails, productPhoto, providerId);
-    }
+//    @OneToMany(mappedBy = "productsEntity", fetch = FetchType.LAZY)
+//    private List<CartItemsEntity> cartItemsEntityList;
 }

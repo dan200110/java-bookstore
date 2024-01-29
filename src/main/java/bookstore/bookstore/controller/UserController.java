@@ -42,7 +42,11 @@ public class UserController {
         String jwtToken = jwtUtils.extractJwtTokenFromAuthHeader(authHeader);
         Optional<UsersEntity> usersEntity = userService.getUserByJwtToken(jwtToken);
 
-        return usersEntity.map(entity -> new ResponseEntity<>(entity, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(usersEntity.get(), HttpStatus.BAD_REQUEST));
+        if (usersEntity.isPresent()) {
+            return new ResponseEntity<>(usersEntity.get(), HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(new UsersEntity(), HttpStatus.BAD_REQUEST);
 
     }
 }

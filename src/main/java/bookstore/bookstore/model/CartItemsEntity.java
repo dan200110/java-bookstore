@@ -9,9 +9,7 @@ import java.util.Objects;
 @Table(name = "cart_item", schema = "e-commerce", catalog = "")
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
 public class CartItemsEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -20,23 +18,12 @@ public class CartItemsEntity {
     @Basic
     @Column(name = "user_id")
     private Integer userId;
-    @Basic
-    @Column(name = "product_id")
-    private Integer productId;
+
     @Basic
     @Column(name = "quantity")
     private Integer quantity;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CartItemsEntity that = (CartItemsEntity) o;
-        return id == that.id && Objects.equals(userId, that.userId) && Objects.equals(productId, that.productId) && Objects.equals(quantity, that.quantity);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, userId, productId, quantity);
-    }
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private ProductsEntity productsEntity;
 }
