@@ -2,6 +2,7 @@ package bookstore.bookstore.controller;
 
 import bookstore.bookstore.dto.ProductsDTO;
 import bookstore.bookstore.dto.ProductsPaginationDTO;
+import bookstore.bookstore.model.ProductsEntity;
 import bookstore.bookstore.service.ProductsService;
 import bookstore.bookstore.utils.AppConstants;
 import bookstore.bookstore.utils.JwtUtils;
@@ -60,5 +61,29 @@ public class ProductsController {
             @RequestParam(value = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir
     ) {
         return productsService.getProductsByName(query, pageNo, pageSize, sortBy, sortDir);
+    }
+
+    @DeleteMapping("/delete_product")
+    public ResponseEntity<String> deleteProduct(@RequestParam int productId) {
+        if (Boolean.TRUE.equals(productsService.deleteProductById(productId))) {
+            return new ResponseEntity<>("Delete product successfully", HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>("Failed to delete product", HttpStatus.BAD_REQUEST);
+    }
+
+    @PutMapping("/update_product/{id}")
+    public ResponseEntity<String> updateProduct(
+            @PathVariable("id") int productId,
+            @RequestBody ProductsDTO updateProduct,
+            @RequestHeader(name = "Authorization") String authHeader
+    ) {
+        String jwtToken = jwtUtils.extractJwtTokenFromAuthHeader(authHeader);
+
+        if (Boolean.TRUE.equals(productsService.updateProductById(jwtToken, productId, updateProduct))) {
+            return new ResponseEntity<>("Update product successfully", HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>("Failed to update product", HttpStatus.BAD_REQUEST);
     }
 }

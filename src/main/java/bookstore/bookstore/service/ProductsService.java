@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.tags.form.OptionsTag;
 
 import java.util.List;
 import java.util.Optional;
@@ -76,18 +77,12 @@ public class ProductsService implements ProductsServiceInterface{
     @Override
     public Boolean createProduct(String jwtToken, ProductsDTO productsDTO) {
         Optional<UsersEntity> usersEntity = userService.getUserByUserName(jwtUtils.getUserNameFromJwtToken(jwtToken));
-        Optional<CategoryEntity> existCategoryEntity = categoryService.findCategoryEntityByCategoryName(productsDTO.getCategoryName());
         if (usersEntity.isPresent()) {
-            CategoryEntity categoryEntity = new CategoryEntity();
-
-            if (existCategoryEntity.isEmpty()) {
-                categoryEntity.setCategoryName(productsDTO.getCategoryName());
-            } else {
-                categoryEntity = existCategoryEntity.get();
-            }
+            CategoryEntity categoryEntity = getCategoryEntity(productsDTO);
 
             ProductsEntity productsEntity = mapToEntity(productsDTO);
             productsEntity.setUsersEntity(usersEntity.get());
+            productsEntity.setCategoryEntity(categoryEntity);
 
             try {
                 productsRepository.save(productsEntity);
@@ -98,6 +93,65 @@ public class ProductsService implements ProductsServiceInterface{
         }
 
         return false;
+    }
+
+    @Override
+    public Boolean deleteProductById(Integer productId) {
+        try {
+            productsRepository.deleteById(productId);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    @Override
+    public Boolean updateProductById(String jwtToken, int productId, ProductsDTO updateProduct) {
+        Optional<ProductsEntity> productsEntity = productsRepository.findById(productId);
+        Optional<UsersEntity> usersEntity = userService.getUserByUserName(jwtUtils.getUserNameFromJwtToken(jwtToken));
+
+        if (productsEntity.isPresent()) {
+            CategoryEntity categoryEntity = getCategoryEntity(updateProduct);
+            if (isValidProduct(updateProduct) && productsEntity.get().getUsersEntity().getId() == usersEntity.get().getId()) {
+                updateProductFields(productsEntity.get(), updateProduct, categoryEntity);
+                try {
+                    productsRepository.save(productsEntity.get());
+                    return true;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private CategoryEntity getCategoryEntity(ProductsDTO productsDTO) {
+        return categoryService.findCategoryEntityByCategoryName(productsDTO.getCategoryName())
+                .orElseGet(() -> {
+                    CategoryEntity categoryEntity = new CategoryEntity();
+                    categoryEntity.setCategoryName(productsDTO.getCategoryName());
+                    return categoryEntity;
+                });
+    }
+
+    private boolean isValidProduct(ProductsDTO productsDTO) {
+        return productsDTO.getQuantity() != null
+                && productsDTO.getProductDetails() != null
+                && productsDTO.getProductPhoto() != null
+                && productsDTO.getProductName() != null
+                && productsDTO.getProductPrice() != null;
+    }
+
+    private void updateProductFields(ProductsEntity productsEntity, ProductsDTO productsDTO, CategoryEntity categoryEntity) {
+        productsEntity.setQuantity(productsDTO.getQuantity());
+        productsEntity.setProductDetails(productsDTO.getProductDetails());
+        productsEntity.setProductPhoto(productsDTO.getProductPhoto());
+        productsEntity.setProductName(productsDTO.getProductName());
+        productsEntity.setProductPrice(productsDTO.getProductPrice());
+        productsEntity.setCategoryEntity(categoryEntity);
     }
 
     private ProductsDTO mapToDTO(ProductsEntity productsEntity) {

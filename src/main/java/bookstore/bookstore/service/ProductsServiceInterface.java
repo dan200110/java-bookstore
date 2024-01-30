@@ -17,4 +17,8 @@ public interface ProductsServiceInterface {
     Boolean createProduct(String jwtToken, ProductsDTO productsDTO);
 
     ProductsPaginationDTO getProductsByName(String query, int pageNo, int pageSize, String sortBy, String sortDir);
+
+    Boolean deleteProductById(Integer productId);
+
+    Boolean updateProductById(String jwtToken, int productId, ProductsDTO updateProduct);
 }
