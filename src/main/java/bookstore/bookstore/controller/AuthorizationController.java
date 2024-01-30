@@ -4,7 +4,7 @@ package bookstore.bookstore.controller;
 import bookstore.bookstore.dto.JwtModel;
 import bookstore.bookstore.model.UsersEntity;
 import bookstore.bookstore.service.MyUserDetailsService;
-import bookstore.bookstore.util.JwtUtils;
+import bookstore.bookstore.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,14 +1,11 @@
 package bookstore.bookstore.controller;
 
 import bookstore.bookstore.dto.CartItemsDTO;
-import bookstore.bookstore.dto.JwtModel;
-import bookstore.bookstore.model.CartItemsEntity;
 import bookstore.bookstore.model.UsersEntity;
 import bookstore.bookstore.service.CartItemsService;
 import bookstore.bookstore.service.UserService;
-import bookstore.bookstore.util.JwtUtils;
+import bookstore.bookstore.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Hibernate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -74,7 +71,7 @@ public class CartItemsController {
     }
 
     @DeleteMapping("/delete_cart_item_by_ids")
-    public ResponseEntity<String> deleteCartItem(@RequestHeader(name = "Authorization") String authHeader, @RequestParam String cartItemIds) {
+    public ResponseEntity<String> deleteCartItem(@RequestHeader(name = "Authorization") String authHeader, @RequestParam List<Integer> cartItemIds) {
         String jwtToken = jwtUtils.extractJwtTokenFromAuthHeader(authHeader);
         if (Boolean.TRUE.equals(cartItemsService.deleteCartItemsByIds(jwtToken, cartItemIds))) {
             return new ResponseEntity<>("Delete cart items successfully", HttpStatus.OK);

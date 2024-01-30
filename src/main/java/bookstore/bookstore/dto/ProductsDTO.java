@@ -3,7 +3,7 @@ package bookstore.bookstore.dto;
 import lombok.Data;
 
 @Data
-public class ResponseProductsDTO {
+public class ProductsDTO {
     private int productId;
     private String categoryName;
     private String productName;

@@ -34,9 +34,9 @@ public class ProductsEntity {
     @Column(name = "product_photo")
     private String productPhoto;
 
-//    @ManyToOne(cascade = CascadeType.PERSIST)
-//    @JoinColumn(name = "product_category")
-//    private CategoryEntity categoryEntity;
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "product_category")
+    private CategoryEntity categoryEntity;
 
     @ManyToOne
     @JoinColumn(name = "provider_id")

@@ -1,21 +1,23 @@
 package bookstore.bookstore.service;
 
-//import bookstore.bookstore.dto.NewProductsDTO;
-
-import bookstore.bookstore.dto.NewProductsDTO;
-import bookstore.bookstore.dto.ResponseProductsDTO;
+import bookstore.bookstore.dto.ProductsPaginationDTO;
+import bookstore.bookstore.dto.ProductsDTO;
 import bookstore.bookstore.model.CategoryEntity;
 import bookstore.bookstore.model.ProductsEntity;
 import bookstore.bookstore.model.UsersEntity;
 import bookstore.bookstore.repository.ProductsRepository;
-import bookstore.bookstore.util.JwtUtils;
+import bookstore.bookstore.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,31 +29,27 @@ public class ProductsService implements ProductsServiceInterface{
     private final CategoryService categoryService;
 
     @Override
-    public Optional<List<ResponseProductsDTO>> findAllProducts() {
-        List<ProductsEntity> productsEntities = productsRepository.findAll()/* Fetch products from repository */;
-        List<ResponseProductsDTO> productsDTOList = convertProductsToDTOs(productsEntities);
-        return Optional.ofNullable(productsDTOList);
+    public ProductsPaginationDTO getAllProductsPagination(int pageNo, int pageSize, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        // create Pageable instance
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Page<ProductsEntity> productsEntities = productsRepository.findAll(pageable);
+
+        List<ProductsDTO> productsDTOList = productsEntities.stream().map(product -> mapToDTO(product)).toList();
+
+        ProductsPaginationDTO productsPaginationDTO = mapToPagination(productsEntities);
+        productsPaginationDTO.setProductsDTOList(productsDTOList);
+
+        return productsPaginationDTO;
     }
 
-    private List<ResponseProductsDTO> convertProductsToDTOs(List<ProductsEntity> productsEntities) {
-        List<ResponseProductsDTO> productsDTOList = new ArrayList<>();
-
-        for (ProductsEntity productsEntity : productsEntities) {
-            ResponseProductsDTO productsDTO = new ResponseProductsDTO();
-            productsDTO.setProductId(productsEntity.getId());
-            productsDTO.setProductName(productsEntity.getProductName());
-            productsDTO.setProductPrice(productsEntity.getProductPrice());
-            productsDTO.setQuantity(productsEntity.getQuantity());
-            productsDTO.setProductPhoto(productsEntity.getProductPhoto());
-            productsDTO.setProductDetails(productsEntity.getProductDetails());
-            productsDTO.setProviderId(productsEntity.getUsersEntity().getId());
-            // Assuming categoryName is derived or obtained from some other source
-//            productsDTO.setCategoryName(productsEntity.getCategoryEntity().getCategoryName());
-
-            productsDTOList.add(productsDTO);
-        }
-
-        return productsDTOList;
+    @Override
+    public Optional<List<ProductsDTO>> findAllProducts() {
+        List<ProductsEntity> productsEntities = productsRepository.findAll()/* Fetch products from repository */;
+        List<ProductsDTO> productsDTOList = productsEntities.stream().map(this::mapToDTO).collect(Collectors.toList());
+        return Optional.of(productsDTOList);
     }
 
     @Override
@@ -60,25 +58,35 @@ public class ProductsService implements ProductsServiceInterface{
     }
 
     @Override
-    public Boolean createProduct(String jwtToken, NewProductsDTO newProductsDTO) {
+    public ProductsPaginationDTO getProductsByName(String query, int pageNo, int pageSize, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        // create Pageable instance
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Page<ProductsEntity> productsEntities = productsRepository.searchProducts(query, pageable);
+        List<ProductsDTO> productsDTOList = productsEntities.stream().map(product -> mapToDTO(product)).toList();
+
+        ProductsPaginationDTO productsPaginationDTO = mapToPagination(productsEntities);
+        productsPaginationDTO.setProductsDTOList(productsDTOList);
+
+        return productsPaginationDTO;
+    }
+
+    @Override
+    public Boolean createProduct(String jwtToken, ProductsDTO productsDTO) {
         Optional<UsersEntity> usersEntity = userService.getUserByUserName(jwtUtils.getUserNameFromJwtToken(jwtToken));
-        Optional<CategoryEntity> existCategoryEntity = categoryService.findCategoryEntityByCategoryName(newProductsDTO.getCategoryName());
+        Optional<CategoryEntity> existCategoryEntity = categoryService.findCategoryEntityByCategoryName(productsDTO.getCategoryName());
         if (usersEntity.isPresent()) {
             CategoryEntity categoryEntity = new CategoryEntity();
 
             if (existCategoryEntity.isEmpty()) {
-                categoryEntity.setCategoryName(newProductsDTO.getCategoryName());
+                categoryEntity.setCategoryName(productsDTO.getCategoryName());
             } else {
                 categoryEntity = existCategoryEntity.get();
             }
 
-            ProductsEntity productsEntity = new ProductsEntity();
-            productsEntity.setQuantity(newProductsDTO.getQuantity());
-            productsEntity.setProductDetails(newProductsDTO.getProductDetails());
-            productsEntity.setProductPhoto(newProductsDTO.getProductPhoto());
-            productsEntity.setProductName(newProductsDTO.getProductName());
-            productsEntity.setProductPrice(newProductsDTO.getProductPrice());
-//            productsEntity.setCategoryEntity(categoryEntity);
+            ProductsEntity productsEntity = mapToEntity(productsDTO);
             productsEntity.setUsersEntity(usersEntity.get());
 
             try {
@@ -90,5 +98,41 @@ public class ProductsService implements ProductsServiceInterface{
         }
 
         return false;
+    }
+
+    private ProductsDTO mapToDTO(ProductsEntity productsEntity) {
+        ProductsDTO productsDTO = new ProductsDTO();
+        productsDTO.setProductId(productsEntity.getId());
+        productsDTO.setProductName(productsEntity.getProductName());
+        productsDTO.setProductPrice(productsEntity.getProductPrice());
+        productsDTO.setQuantity(productsEntity.getQuantity());
+        productsDTO.setProductPhoto(productsEntity.getProductPhoto());
+        productsDTO.setProductDetails(productsEntity.getProductDetails());
+        productsDTO.setProviderId(productsEntity.getUsersEntity().getId());
+        productsDTO.setCategoryName(productsEntity.getCategoryEntity().getCategoryName());
+
+        return productsDTO;
+    }
+
+    private ProductsEntity mapToEntity(ProductsDTO productsDTO) {
+        ProductsEntity productsEntity = new ProductsEntity();
+        productsEntity.setQuantity(productsDTO.getQuantity());
+        productsEntity.setProductDetails(productsDTO.getProductDetails());
+        productsEntity.setProductPhoto(productsDTO.getProductPhoto());
+        productsEntity.setProductName(productsDTO.getProductName());
+        productsEntity.setProductPrice(productsDTO.getProductPrice());
+
+        return productsEntity;
+    }
+
+    private ProductsPaginationDTO mapToPagination(Page<ProductsEntity> productsEntities) {
+        ProductsPaginationDTO productsPaginationDTO = new ProductsPaginationDTO();
+        productsPaginationDTO.setPageNo(productsEntities.getNumber());
+        productsPaginationDTO.setPageSize(productsEntities.getSize());
+        productsPaginationDTO.setTotalElements(productsEntities.getTotalElements());
+        productsPaginationDTO.setTotalPages(productsEntities.getTotalPages());
+        productsPaginationDTO.setLast(productsEntities.isLast());
+
+        return productsPaginationDTO;
     }
 }
