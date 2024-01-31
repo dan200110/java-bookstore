@@ -1,4 +1,4 @@
-package bookstore.bookstore.util;
+package bookstore.bookstore.utils;
 
 import java.util.Date;
 
