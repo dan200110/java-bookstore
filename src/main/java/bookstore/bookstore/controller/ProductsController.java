@@ -2,8 +2,7 @@ package bookstore.bookstore.controller;
 
 import bookstore.bookstore.dto.ProductsDTO;
 import bookstore.bookstore.dto.ProductsPaginationDTO;
-import bookstore.bookstore.model.ProductsEntity;
-import bookstore.bookstore.service.ProductsService;
+import bookstore.bookstore.service.impl.ProductsService;
 import bookstore.bookstore.utils.AppConstants;
 import bookstore.bookstore.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;

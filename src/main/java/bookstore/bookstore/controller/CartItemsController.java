@@ -2,8 +2,8 @@ package bookstore.bookstore.controller;
 
 import bookstore.bookstore.dto.CartItemsDTO;
 import bookstore.bookstore.model.UsersEntity;
-import bookstore.bookstore.service.CartItemsService;
-import bookstore.bookstore.service.UserService;
+import bookstore.bookstore.service.impl.CartItemsService;
+import bookstore.bookstore.service.impl.UserService;
 import bookstore.bookstore.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -78,5 +78,20 @@ public class CartItemsController {
         }
 
         return new ResponseEntity<>("Failed to delete cart items", HttpStatus.BAD_REQUEST);
+    }
+
+    @PutMapping("/update_cart_item_quantity/{id}")
+    public ResponseEntity<String> updateCartItem(
+            @PathVariable("id") int cartItemId,
+            @RequestParam Integer quantity,
+            @RequestHeader(name = "Authorization") String authHeader
+    ) {
+        String jwtToken = jwtUtils.extractJwtTokenFromAuthHeader(authHeader);
+
+        if (Boolean.TRUE.equals(cartItemsService.updateCartItemQuantityById(jwtToken, cartItemId, quantity))) {
+            return new ResponseEntity<>("Update cart item successfully", HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>("Failed to update cart item", HttpStatus.BAD_REQUEST);
     }
 }

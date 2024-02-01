@@ -13,7 +13,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ProductReviewsEntity {
+public class ProductReviewsEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -34,16 +34,4 @@ public class ProductReviewsEntity {
     @Column(name = "review_date")
     private Date reviewDate;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ProductReviewsEntity that = (ProductReviewsEntity) o;
-        return id == that.id && Objects.equals(reviewProductId, that.reviewProductId) && Objects.equals(reviewBy, that.reviewBy) && Objects.equals(rating, that.rating) && Objects.equals(comment, that.comment) && Objects.equals(reviewDate, that.reviewDate);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, reviewProductId, reviewBy, rating, comment, reviewDate);
-    }
 }

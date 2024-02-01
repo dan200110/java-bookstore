@@ -1,4 +1,4 @@
-package bookstore.bookstore.service;
+package bookstore.bookstore.service.impl;
 
 import bookstore.bookstore.dto.ProductsPaginationDTO;
 import bookstore.bookstore.dto.ProductsDTO;
@@ -6,6 +6,7 @@ import bookstore.bookstore.model.CategoryEntity;
 import bookstore.bookstore.model.ProductsEntity;
 import bookstore.bookstore.model.UsersEntity;
 import bookstore.bookstore.repository.ProductsRepository;
+import bookstore.bookstore.service.ProductsServiceInterface;
 import bookstore.bookstore.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +15,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.tags.form.OptionsTag;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ProductsService implements ProductsServiceInterface{
+public class ProductsService implements ProductsServiceInterface {
     private final ProductsRepository productsRepository;
     private final UserService userService;
     private final JwtUtils jwtUtils;

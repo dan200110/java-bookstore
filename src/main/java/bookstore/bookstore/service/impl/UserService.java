@@ -1,8 +1,10 @@
-package bookstore.bookstore.service;
+package bookstore.bookstore.service.impl;
 
 import bookstore.bookstore.dto.UserDTO;
 import bookstore.bookstore.model.UsersEntity;
 import bookstore.bookstore.repository.UserRepository;
+import bookstore.bookstore.service.UserServiceInterface;
+import bookstore.bookstore.service.impl.MyUserDetailsService;
 import bookstore.bookstore.utils.JwtUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

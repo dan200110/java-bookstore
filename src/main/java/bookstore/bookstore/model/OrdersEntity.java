@@ -1,46 +1,39 @@
 package bookstore.bookstore.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Date;
-import java.util.Objects;
+import java.util.List;
 
 @Entity
 @Table(name = "orders", schema = "e-commerce", catalog = "")
 @Getter
 @Setter
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @NoArgsConstructor
-public class OrdersEntity {
+public class OrdersEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
     private int id;
-    @Basic
-    @Column(name = "order_by")
-    private Integer orderBy;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private UsersEntity usersEntity;
+
     @Basic
     @Column(name = "total_amount")
     private Integer totalAmount;
+
     @Basic
     @Column(name = "status")
-    private String status;
-    @Basic
-    @Column(name = "created_at")
-    private Date createdAt;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        OrdersEntity that = (OrdersEntity) o;
-        return id == that.id && Objects.equals(orderBy, that.orderBy) && Objects.equals(totalAmount, that.totalAmount) && Objects.equals(status, that.status) && Objects.equals(createdAt, that.createdAt);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, orderBy, totalAmount, status, createdAt);
-    }
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "order_id")
+    private List<OrderItemsEntity> orderItemsEntityList;
 }

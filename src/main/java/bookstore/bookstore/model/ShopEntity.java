@@ -12,7 +12,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ShopEntity {
+public class ShopEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -24,16 +24,4 @@ public class ShopEntity {
     @Column(name = "revenue")
     private Integer revenue;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ShopEntity that = (ShopEntity) o;
-        return id == that.id && Objects.equals(shopOwnerId, that.shopOwnerId) && Objects.equals(revenue, that.revenue);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, shopOwnerId, revenue);
-    }
 }

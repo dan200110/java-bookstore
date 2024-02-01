@@ -2,7 +2,7 @@ package bookstore.bookstore.controller;
 
 import bookstore.bookstore.dto.UserDTO;
 import bookstore.bookstore.model.UsersEntity;
-import bookstore.bookstore.service.UserService;
+import bookstore.bookstore.service.impl.UserService;
 import bookstore.bookstore.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

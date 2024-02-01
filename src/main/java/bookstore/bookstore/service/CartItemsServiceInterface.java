@@ -14,6 +14,8 @@ public interface CartItemsServiceInterface {
 
     Boolean deleteCartItemById(String jwtToken, int id);
 
+    Boolean updateCartItemQuantityById(String jwtToken, int cartItemId, int quantity);
+
     Boolean deleteAllCartItems(String jwtToken);
 
     @Transactional

@@ -1,5 +1,6 @@
 package bookstore.bookstore.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,32 +13,25 @@ import java.util.Objects;
 @Table(name = "order_items", schema = "e-commerce", catalog = "")
 @Getter
 @Setter
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @NoArgsConstructor
-public class OrderItemsEntity {
+public class OrderItemsEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
     private int id;
-    @Basic
-    @Column(name = "order_id")
-    private Integer orderId;
-    @Basic
-    @Column(name = "product_id")
-    private Integer productId;
-    @Basic
-    @Column(name = "created_at")
-    private Date createdAt;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        OrderItemsEntity that = (OrderItemsEntity) o;
-        return id == that.id && Objects.equals(orderId, that.orderId) && Objects.equals(productId, that.productId) && Objects.equals(createdAt, that.createdAt);
-    }
+    @ManyToOne
+    @JoinColumn(name = "order_id", nullable = false)
+    private OrdersEntity ordersEntity;
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, orderId, productId, createdAt);
-    }
+    @ManyToOne
+    @JoinColumn(name = "product_id", nullable = false)
+    private ProductsEntity productsEntity;
+
+    @Column(name = "quantity")
+    private Integer quantity;
+
+    @Column(name = "price")
+    private Integer price;
 }
