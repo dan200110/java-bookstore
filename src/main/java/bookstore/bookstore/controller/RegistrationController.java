@@ -1,7 +1,7 @@
 package bookstore.bookstore.controller;
 
 import bookstore.bookstore.model.UsersEntity;
-import bookstore.bookstore.service.UserService;
+import bookstore.bookstore.service.impl.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

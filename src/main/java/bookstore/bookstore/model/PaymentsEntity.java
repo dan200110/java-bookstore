@@ -14,7 +14,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
-public class PaymentsEntity {
+public class PaymentsEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -31,20 +31,4 @@ public class PaymentsEntity {
     @Basic
     @Column(name = "status")
     private String status;
-    @Basic
-    @Column(name = "created_at")
-    private Date createdAt;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        PaymentsEntity that = (PaymentsEntity) o;
-        return id == that.id && Objects.equals(paymentType, that.paymentType) && Objects.equals(orderId, that.orderId) && Objects.equals(amount, that.amount) && Objects.equals(status, that.status) && Objects.equals(createdAt, that.createdAt);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, paymentType, orderId, amount, status, createdAt);
-    }
 }

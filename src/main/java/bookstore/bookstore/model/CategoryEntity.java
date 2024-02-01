@@ -11,7 +11,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CategoryEntity {
+public class CategoryEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")

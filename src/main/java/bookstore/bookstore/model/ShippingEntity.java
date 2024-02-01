@@ -13,7 +13,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ShippingEntity {
+public class ShippingEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
@@ -31,16 +31,4 @@ public class ShippingEntity {
     @Column(name = "shipped_date")
     private Date shippedDate;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ShippingEntity that = (ShippingEntity) o;
-        return id == that.id && Objects.equals(orderId, that.orderId) && Objects.equals(status, that.status) && Objects.equals(requiredDate, that.requiredDate) && Objects.equals(shippedDate, that.shippedDate);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, orderId, status, requiredDate, shippedDate);
-    }
 }

@@ -1,4 +1,4 @@
-package bookstore.bookstore.service;
+package bookstore.bookstore.service.impl;
 
 import bookstore.bookstore.model.UsersEntity;
 import bookstore.bookstore.repository.UserRepository;

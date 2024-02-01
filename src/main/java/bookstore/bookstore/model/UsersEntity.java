@@ -14,7 +14,7 @@ import java.util.Objects;
 @Getter
 @Entity
 @Table(name = "users", schema = "e-commerce", catalog = "")
-public class UsersEntity {
+public class UsersEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")

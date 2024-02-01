@@ -1,7 +1,7 @@
 package bookstore.bookstore.filter;
 
 
-import bookstore.bookstore.service.MyUserDetailsService;
+import bookstore.bookstore.service.impl.MyUserDetailsService;
 import bookstore.bookstore.utils.JwtUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
