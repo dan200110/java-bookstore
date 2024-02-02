@@ -31,18 +31,45 @@ public class ProductsService implements ProductsServiceInterface {
 
     @Override
     public ProductsPaginationDTO getAllProductsPagination(int pageNo, int pageSize, String sortBy, String sortDir) {
-        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
-                : Sort.by(sortBy).descending();
-
-        // create Pageable instance
-        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Pageable pageable = createPageable(pageNo, pageSize, sortBy, sortDir);
         Page<ProductsEntity> productsEntities = productsRepository.findAll(pageable);
 
-        List<ProductsDTO> productsDTOList = productsEntities.stream().map(product -> mapToDTO(product)).toList();
+        return mapToPagination(productsEntities, mapToDTOList(productsEntities));
+    }
 
-        ProductsPaginationDTO productsPaginationDTO = mapToPagination(productsEntities);
+    @Override
+    public ProductsPaginationDTO getProductsByName(String query, int pageNo, int pageSize, String sortBy, String sortDir) {
+        Pageable pageable = createPageable(pageNo, pageSize, sortBy, sortDir);
+        Page<ProductsEntity> productsEntities = productsRepository.searchProducts(query, pageable);
+
+        return mapToPagination(productsEntities, mapToDTOList(productsEntities));
+    }
+
+    @Override
+    public ProductsPaginationDTO getProductsByCategoryName(String categoryName, int pageNo, int pageSize, String sortBy, String sortDir) {
+        return categoryService.findCategoryEntityByCategoryName(categoryName)
+                .map(categoryEntity -> {
+                    Pageable pageable = createPageable(pageNo, pageSize, sortBy, sortDir);
+                    Page<ProductsEntity> productsEntities = productsRepository.findAllByCategoryEntityId(categoryEntity.getId(), pageable);
+
+                    return mapToPagination(productsEntities, mapToDTOList(productsEntities));
+                })
+                .orElse(new ProductsPaginationDTO());
+    }
+
+    private Pageable createPageable(int pageNo, int pageSize, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+        return PageRequest.of(pageNo, pageSize, sort);
+    }
+
+    private List<ProductsDTO> mapToDTOList(Page<ProductsEntity> productsEntities) {
+        return productsEntities.map(this::mapToDTO).toList();
+    }
+
+    private ProductsPaginationDTO mapToPagination(Page<ProductsEntity> productsEntities, List<ProductsDTO> productsDTOList) {
+        ProductsPaginationDTO productsPaginationDTO = mapToBasePagination(productsEntities);
         productsPaginationDTO.setProductsDTOList(productsDTOList);
-
         return productsPaginationDTO;
     }
 
@@ -56,22 +83,6 @@ public class ProductsService implements ProductsServiceInterface {
     @Override
     public Optional<ProductsEntity> findProductById(int id) {
         return productsRepository.findById(id);
-    }
-
-    @Override
-    public ProductsPaginationDTO getProductsByName(String query, int pageNo, int pageSize, String sortBy, String sortDir) {
-        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
-                : Sort.by(sortBy).descending();
-
-        // create Pageable instance
-        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-        Page<ProductsEntity> productsEntities = productsRepository.searchProducts(query, pageable);
-        List<ProductsDTO> productsDTOList = productsEntities.stream().map(product -> mapToDTO(product)).toList();
-
-        ProductsPaginationDTO productsPaginationDTO = mapToPagination(productsEntities);
-        productsPaginationDTO.setProductsDTOList(productsDTOList);
-
-        return productsPaginationDTO;
     }
 
     @Override
@@ -154,7 +165,7 @@ public class ProductsService implements ProductsServiceInterface {
         productsEntity.setCategoryEntity(categoryEntity);
     }
 
-    private ProductsDTO mapToDTO(ProductsEntity productsEntity) {
+    public ProductsDTO mapToDTO(ProductsEntity productsEntity) {
         ProductsDTO productsDTO = new ProductsDTO();
         productsDTO.setProductId(productsEntity.getId());
         productsDTO.setProductName(productsEntity.getProductName());
@@ -179,7 +190,7 @@ public class ProductsService implements ProductsServiceInterface {
         return productsEntity;
     }
 
-    private ProductsPaginationDTO mapToPagination(Page<ProductsEntity> productsEntities) {
+    private ProductsPaginationDTO mapToBasePagination(Page<ProductsEntity> productsEntities) {
         ProductsPaginationDTO productsPaginationDTO = new ProductsPaginationDTO();
         productsPaginationDTO.setPageNo(productsEntities.getNumber());
         productsPaginationDTO.setPageSize(productsEntities.getSize());

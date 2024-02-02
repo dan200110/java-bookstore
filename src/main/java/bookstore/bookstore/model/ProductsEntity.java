@@ -1,5 +1,6 @@
 package bookstore.bookstore.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,6 +43,4 @@ public class ProductsEntity extends BaseEntity {
     @JoinColumn(name = "provider_id")
     private UsersEntity usersEntity;
 
-//    @OneToMany(mappedBy = "productsEntity", fetch = FetchType.LAZY)
-//    private List<CartItemsEntity> cartItemsEntityList;
 }
