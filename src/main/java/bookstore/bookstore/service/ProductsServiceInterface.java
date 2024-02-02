@@ -10,6 +10,8 @@ import java.util.Optional;
 public interface ProductsServiceInterface {
     ProductsPaginationDTO getAllProductsPagination(int pageNo, int pageSize, String sortBy, String sortDir);
 
+    ProductsPaginationDTO getProductsByCategoryName(String categoryName, int pageNo, int pageSize, String sortBy, String sortDir);
+
     Optional<List<ProductsDTO>> findAllProducts();
 
     Optional<ProductsEntity> findProductById(int id);

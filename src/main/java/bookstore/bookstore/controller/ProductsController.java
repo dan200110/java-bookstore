@@ -2,6 +2,7 @@ package bookstore.bookstore.controller;
 
 import bookstore.bookstore.dto.ProductsDTO;
 import bookstore.bookstore.dto.ProductsPaginationDTO;
+import bookstore.bookstore.model.ProductsEntity;
 import bookstore.bookstore.service.impl.ProductsService;
 import bookstore.bookstore.utils.AppConstants;
 import bookstore.bookstore.utils.JwtUtils;
@@ -84,5 +85,28 @@ public class ProductsController {
         }
 
         return new ResponseEntity<>("Failed to update product", HttpStatus.BAD_REQUEST);
+    }
+
+    @GetMapping("/get_product_by_id/{id}")
+    public ResponseEntity<ProductsDTO> getProductById(@PathVariable("id") int productId) {
+        Optional<ProductsEntity> productOptional = productsService.findProductById(productId);
+
+        return productOptional
+                .map(productEntity -> {
+                    ProductsDTO productsDTO = productsService.mapToDTO(productEntity);
+                    return new ResponseEntity<>(productsDTO, HttpStatus.OK);
+                })
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping("/get_products_by_category_name")
+    public ProductsPaginationDTO getProductByCategoryName(
+            @RequestParam("categoryName") String categoryName,
+            @RequestParam(value = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY, required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir
+    ) {
+        return productsService.getProductsByCategoryName(categoryName, pageNo, pageSize, sortBy, sortDir);
     }
 }

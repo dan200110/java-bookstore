@@ -18,12 +18,15 @@ public class ProductReviewsEntity extends BaseEntity {
     @Id
     @Column(name = "id")
     private int id;
-    @Basic
-    @Column(name = "review_product_id")
-    private Integer reviewProductId;
-    @Basic
-    @Column(name = "review_by")
-    private Integer reviewBy;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private ProductsEntity productsEntity;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UsersEntity usersEntity;
+
     @Basic
     @Column(name = "rating")
     private Integer rating;

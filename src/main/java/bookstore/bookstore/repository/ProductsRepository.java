@@ -13,4 +13,6 @@ public interface ProductsRepository extends JpaRepository<ProductsEntity, Intege
             "p.productName LIKE CONCAT('%', :query, '%')" +
             "OR p.productDetails LIKE CONCAT('%', :query, '%')")
     Page<ProductsEntity> searchProducts(String query, Pageable pageable);
+
+    Page<ProductsEntity> findAllByCategoryEntityId(int id, Pageable pageable);
 }
