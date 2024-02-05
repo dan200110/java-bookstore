@@ -56,7 +56,7 @@ public class CartItemsService implements CartItemsServiceInterface {
         if (usersEntity.isPresent()) {
             Optional<ProductsEntity> productsEntity = productsService.findProductById(cartItemsDTO.getProductId());
 
-            if (productsEntity.isEmpty()) {
+            if (productsEntity.isEmpty() || productsEntity.get().getQuantity() < cartItemsDTO.getQuantity()) {
                 return false;
             }
 

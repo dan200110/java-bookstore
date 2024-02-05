@@ -1,12 +1,10 @@
 package bookstore.bookstore.model;
 
 import jakarta.persistence.*;
-import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import java.time.Instant;
-import java.util.Objects;
+import jakarta.validation.constraints.Positive;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "cart_item", schema = "e-commerce", catalog = "")
@@ -24,6 +22,7 @@ public class CartItemsEntity extends BaseEntity {
     @Column(name = "user_id")
     private Integer userId;
 
+    @Positive(message = "Quantity must be greater than 0")
     @Basic
     @Column(name = "quantity")
     private Integer quantity;

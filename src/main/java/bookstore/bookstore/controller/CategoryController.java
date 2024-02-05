@@ -1,9 +1,6 @@
 package bookstore.bookstore.controller;
 
-import bookstore.bookstore.dto.CartItemsDTO;
-import bookstore.bookstore.exception.ProductOutOfStockException;
 import bookstore.bookstore.model.CategoryEntity;
-import bookstore.bookstore.model.UsersEntity;
 import bookstore.bookstore.service.impl.CategoriesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
