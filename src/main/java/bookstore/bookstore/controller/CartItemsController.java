@@ -41,7 +41,7 @@ public class CartItemsController {
 
 
     @PostMapping("/add_cart_item")
-    public ResponseEntity<?> addCartItem(@RequestHeader(name = "Authorization") String authHeader, @RequestBody @Valid CartItemsDTO cartItemsDTO) {
+    public ResponseEntity<String> addCartItem(@RequestHeader(name = "Authorization") String authHeader, @RequestBody @Valid CartItemsDTO cartItemsDTO) {
         String jwtToken = jwtUtils.extractJwtTokenFromAuthHeader(authHeader);
 
         if (Boolean.TRUE.equals(cartItemsService.saveCartItem(jwtToken, cartItemsDTO))) {

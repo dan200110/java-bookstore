@@ -29,26 +29,26 @@ public class ApiExceptionHandler {
      */
     @ExceptionHandler(IndexOutOfBoundsException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public ErrorMessage TodoException(Exception ex, WebRequest request) {
+    public ErrorMessage todoException(Exception ex, WebRequest request) {
         return new ErrorMessage(404, "record not found");
     }
 
     @ExceptionHandler({AccessDeniedException.class})
     public ResponseEntity<Object> handleAccessDeniedException(
             Exception ex, WebRequest request) {
-        return new ResponseEntity<Object>(
+        return new ResponseEntity<>(
                 "Access denied message here", new HttpHeaders(), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(org.springframework.validation.BindException.class)
-    public ResponseEntity<?> handleBindException(BindException ex) {
+    public ResponseEntity<ErrorMessage> handleBindException(BindException ex) {
         BindingResult bindingResult = ex.getBindingResult();
 
         ErrorMessage errorMessage = new ErrorMessage(400, "Validation error");
 
-        bindingResult.getFieldErrors().forEach(fieldError -> {
-            errorMessage.addValidationError(fieldError.getField(), fieldError.getDefaultMessage());
-        });
+        bindingResult.getFieldErrors().forEach(fieldError ->
+                errorMessage.addValidationError(fieldError.getField(), fieldError.getDefaultMessage())
+        );
 
         return ResponseEntity.badRequest().body(errorMessage);
     }
