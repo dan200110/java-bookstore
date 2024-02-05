@@ -87,6 +87,7 @@ public class ProductsService implements ProductsServiceInterface {
 
     @Override
     public Boolean createProduct(String jwtToken, ProductsDTO productsDTO) {
+        log.info("Creating a new product");
         Optional<UsersEntity> usersEntity = userService.getUserByUserName(jwtUtils.getUserNameFromJwtToken(jwtToken));
         if (usersEntity.isPresent()) {
             CategoryEntity categoryEntity = getCategoryEntity(productsDTO);
@@ -99,7 +100,7 @@ public class ProductsService implements ProductsServiceInterface {
                 productsRepository.save(productsEntity);
                 return true;
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("An error occurred while processing the request", e);
             }
         }
 
@@ -112,7 +113,7 @@ public class ProductsService implements ProductsServiceInterface {
             productsRepository.deleteById(productId);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("An error occurred while processing the request", e);
         }
 
         return false;
@@ -131,7 +132,7 @@ public class ProductsService implements ProductsServiceInterface {
                     productsRepository.save(productsEntity.get());
                     return true;
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error("An error occurred while processing the request", e);
                 }
             }
         }
