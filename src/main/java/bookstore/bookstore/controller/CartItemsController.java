@@ -5,6 +5,7 @@ import bookstore.bookstore.model.UsersEntity;
 import bookstore.bookstore.service.impl.CartItemsService;
 import bookstore.bookstore.service.impl.UserService;
 import bookstore.bookstore.utils.JwtUtils;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +41,7 @@ public class CartItemsController {
 
 
     @PostMapping("/add_cart_item")
-    public ResponseEntity<String> addCartItem(@RequestHeader(name = "Authorization") String authHeader, @RequestBody CartItemsDTO cartItemsDTO) {
+    public ResponseEntity<?> addCartItem(@RequestHeader(name = "Authorization") String authHeader, @RequestBody @Valid CartItemsDTO cartItemsDTO) {
         String jwtToken = jwtUtils.extractJwtTokenFromAuthHeader(authHeader);
 
         if (Boolean.TRUE.equals(cartItemsService.saveCartItem(jwtToken, cartItemsDTO))) {
