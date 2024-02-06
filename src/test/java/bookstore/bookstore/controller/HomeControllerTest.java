@@ -23,7 +23,7 @@ class HomeControllerTest {
 
         mockMvc.perform(get("/home/gethome"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("index21"));
+                .andExpect(view().name("index"));
     }
 
 }

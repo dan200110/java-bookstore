@@ -10,43 +10,29 @@ on:
       - synchronize
 
 jobs:
-  tests:
+  test:
+    name: Unit Test
     runs-on: ubuntu-latest
-
-    services:
-      mysql:
-        image: mysql:latest
-        env:
-          MYSQL_DATABASE: e-commerce
-          MYSQL_ROOT_PASSWORD: root
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Wait for MySQL to be ready
-        run: |
-          timeout=300
-          while ! mysqladmin ping -h127.0.0.1 --port=3306 --user=root --password=root --silent; do
-            sleep 1
-            timeout=$((timeout - 1))
-            if [ "$timeout" -eq 0 ]; then
-              echo "MySQL not ready within timeout."
-              exit 1
-            fi
-          done
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
-          distribution: 'adopt'
-          cache: maven
+          distribution: 'temurin'
+          cache: 'maven'
 
-      - name: Build Maven
+      - name: Build with Maven
         run: mvn -B package --file pom.xml
 
-      - name: Run all tests
-        run: mvn surefire:test
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Run Tests
+        run: mvn -B test
