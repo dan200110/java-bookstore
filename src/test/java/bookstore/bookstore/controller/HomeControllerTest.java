@@ -8,7 +8,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-public class HomeControllerTest {
+class HomeControllerTest {
     @Test
     void testGetHome() throws Exception {
         HomeController homeController = new HomeController();
@@ -23,7 +23,7 @@ public class HomeControllerTest {
 
         mockMvc.perform(get("/home/gethome"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("index"));
+                .andExpect(view().name("index21"));
     }
 
 }

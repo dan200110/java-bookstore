@@ -46,7 +46,7 @@ jobs:
           cache: maven
 
       - name: Build Maven
-        run: mvn -B package --file pom.xml -Dmaven.test.skip
+        run: mvn -B package --file pom.xml
 
       - name: Run all tests
         run: mvn surefire:test
