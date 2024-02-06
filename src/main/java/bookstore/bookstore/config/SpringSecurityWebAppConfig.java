@@ -49,6 +49,7 @@ public class SpringSecurityWebAppConfig {
                 .requestMatchers("/product/delete_product").authenticated()
                 .requestMatchers("/product/update_product").authenticated()
                 .requestMatchers("/register/**").permitAll()
+                .requestMatchers("/home/**").permitAll()
                 .requestMatchers("/login/**").permitAll()
                 .requestMatchers("/product/**").permitAll()
                 .requestMatchers("/category/get_all_category").permitAll()
