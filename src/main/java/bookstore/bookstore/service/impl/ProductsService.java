@@ -28,7 +28,7 @@ public class ProductsService implements ProductsServiceInterface {
     private final UserService userService;
     private final JwtUtils jwtUtils;
     private final CategoryService categoryService;
-
+    private final String ERROR_MESSAGE = "An error occurred while processing the request";
     @Override
     public ProductsPaginationDTO getAllProductsPagination(int pageNo, int pageSize, String sortBy, String sortDir) {
         Pageable pageable = createPageable(pageNo, pageSize, sortBy, sortDir);
@@ -75,6 +75,7 @@ public class ProductsService implements ProductsServiceInterface {
 
     @Override
     public Optional<List<ProductsDTO>> findAllProducts() {
+
         List<ProductsEntity> productsEntities = productsRepository.findAll()/* Fetch products from repository */;
         List<ProductsDTO> productsDTOList = productsEntities.stream().map(this::mapToDTO).collect(Collectors.toList());
         return Optional.of(productsDTOList);
@@ -100,7 +101,7 @@ public class ProductsService implements ProductsServiceInterface {
                 productsRepository.save(productsEntity);
                 return true;
             } catch (Exception e) {
-                log.error("An error occurred while processing the request", e);
+                log.error(ERROR_MESSAGE, e);
             }
         }
 
@@ -113,7 +114,7 @@ public class ProductsService implements ProductsServiceInterface {
             productsRepository.deleteById(productId);
             return true;
         } catch (Exception e) {
-            log.error("An error occurred while processing the request", e);
+            log.error(ERROR_MESSAGE, e);
         }
 
         return false;
@@ -132,7 +133,7 @@ public class ProductsService implements ProductsServiceInterface {
                     productsRepository.save(productsEntity.get());
                     return true;
                 } catch (Exception e) {
-                    log.error("An error occurred while processing the request", e);
+                    log.error(ERROR_MESSAGE, e);
                 }
             }
         }
